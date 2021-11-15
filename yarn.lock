@@ -1206,10 +1206,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@markmccoid/react-native-drag-and-order@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@markmccoid/react-native-drag-and-order/-/react-native-drag-and-order-0.1.2.tgz#f848d63a80d80f3017d8fd9798f929d52f45a969"
-  integrity sha512-gZjK9nkP7yqh6UKs3mif26nS53mt4aBh5mnzBIYqkudtGWkHSdH/cmZIG4ePcqX8X57e4mhC1SJ5h1LpWuOzKQ==
+"@markmccoid/react-native-drag-and-order@^0.1.5":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@markmccoid/react-native-drag-and-order/-/react-native-drag-and-order-0.1.7.tgz#33934b83f909ed8d4262c05de323cd4407f52d90"
+  integrity sha512-6Y6Q3oqnz/1qxhNY8+wzYhMhJABljSVbZpXptMPb8GatCXme3tcrdbAxMCQBebk9PoY//Db9QOztiW39FIKJnw==
   dependencies:
     "@expo/vector-icons" "^12.0.0"
     expo-haptics "~11.0.3"

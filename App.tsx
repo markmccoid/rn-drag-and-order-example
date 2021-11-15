@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
   StyleSheet,
@@ -9,56 +8,89 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { MotiView } from "@motify/components";
+
 import DragDropEntry, {
   DragItem,
   sortArray,
+  updatePositionArrayField,
   TScrollFunctions,
+  Positions,
 } from "@markmccoid/react-native-drag-and-order";
-import { useStore, ItemType } from "./store";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+export type ItemType = {
+  id: number | string;
+  name: string;
+  pos: number;
+};
+
+const itemData = [
+  { id: "a", name: "Coconut Milk", pos: 0 },
+  { id: "b", name: "Lettuce", pos: 1 },
+  { id: "c", name: "Walnuts", pos: 2 },
+  { id: "d", name: "Chips", pos: 3 },
+  { id: "e", name: "Ice Cream", pos: 4 },
+  { id: "f", name: "Carrots", pos: 5 },
+  { id: "g", name: "Onions", pos: 6 },
+  { id: "h", name: "Cheese", pos: 7 },
+  { id: "i", name: "Frozen Dinners", pos: 8 },
+  { id: "j", name: "Yogurt", pos: 9 },
+  { id: "k", name: "Kombucha", pos: 10 },
+  { id: "l", name: "Lemons", pos: 11 },
+  { id: "m", name: "Bread", pos: 12 },
+];
 
 export default function App() {
   // prevNumberOfItems used in useEffect (commented out by default)
   const prevNumberOfItems = React.useRef(0);
   const [newItem, setNewItem] = React.useState("");
-  const items = useStore((state) => state.itemList);
-  const addItem = useStore((state) => state.addItem);
-  const removeItemById = useStore((state) => state.removeItemById);
-  const updateItemList = useStore((state) => state.updateItemList);
+  const [items, setItems] = React.useState<ItemType[]>(itemData);
+  // add an item to the end of the items array
+  const addItem = (itemValue: string) => {
+    setItems((prev) => [...prev, { id: prev.length + 1, name: itemValue, pos: prev.length }]);
+  };
+  // remove item with id passed.  Use the updatePositionArrayField helper to make sure our
+  // "pos" key within our ItemType is updated to make the index it lines up with.
+  // NOTE: you do not need a position key/field in you item objects.  You may just need
+  // the array to have the proper order and if so, the position field is not needed.
+  const removeItemById = (id: string | number) =>
+    setItems((prev) =>
+      updatePositionArrayField<ItemType>(
+        prev.filter((item) => item.id !== id),
+        "pos"
+      )
+    );
 
+  // Store the scroll functions for our dragdrop list
   const [scrollFunctions, setScrollFunctions] = React.useState<TScrollFunctions>();
-
-  //* The useEffect below is used to scroll to the end or start
-  //* on adds and deletes of items.  Without this, the scroll will not
-  //* move on adds/deletes of items
-  React.useEffect(() => {
-    if (scrollFunctions) {
-      // scrollFunctions.scrollToEnd();
-      const numberOfItems = items.length;
-      if (numberOfItems > prevNumberOfItems.current) {
-        console.log("Scrolling To End >");
-        scrollFunctions.scrollToEnd();
-      } else if (numberOfItems < prevNumberOfItems.current) {
-        //Item has been removed
-        // probably you do not want to scroll the list as this would be confusing
-        // -----
-        // scrollFunctions.scrollToStart();
-      }
-    }
-    prevNumberOfItems.current = items.length;
-  }, [items.length]);
+  const reorderFunc = React.useCallback(
+    (positions: Positions) => {
+      setItems(
+        sortArray<ItemType>(positions, items, {
+          positionField: "pos",
+          idField: "id",
+        }) as ItemType[]
+      );
+    },
+    [items]
+  );
   //************************************************* */
+  // You can use an useEffect hook to scroll to start/end
+  // based on how many items in your list.
+  // React.useEffect(() => {
+  //   if (!scrollFunctions) return;
+  //   if (items.length <= 5) {
+  //     scrollFunctions.scrollToEnd();
+  //   }
+  // }, [items.length]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>D & D Grocery List </Text>
       <View style={styles.separator} />
       <DragDropEntry
         scrollStyles={{ width: "100%", height: "30%", borderWidth: 1, borderColor: "#aaa" }}
-        updatePositions={(positions) =>
-          updateItemList(sortArray<ItemType>(positions, items, "pos"))
-        }
-        getScrollFunctions={(functionObj) => setScrollFunctions(functionObj)}
+        updatePositions={reorderFunc}
+        getScrollFunctions={(scrollFuncs: TScrollFunctions) => setScrollFunctions(scrollFuncs)}
         itemHeight={50}
         handlePosition="left"
         // handle={AltHandle}

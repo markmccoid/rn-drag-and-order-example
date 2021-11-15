@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@markmccoid/react-native-drag-and-order": "^0.1.2",
+    "@markmccoid/react-native-drag-and-order": "^0.1.5",
     "expo": "~43.0.2",
     "expo-status-bar": "~1.1.0",
     "lodash": "^4.17.21",
